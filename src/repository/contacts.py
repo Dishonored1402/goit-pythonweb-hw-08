@@ -52,3 +52,13 @@ async def get_upcoming_birthdays(db: Session):
             if today <= bday_this_year <= next_week:
                 upcoming.append(contact)
     return upcoming
+
+async def get_contact(contact_id: int, db: Session):
+    return db.query(Contact).filter(Contact.id == contact_id).first()
+
+async def remove_contact(contact_id: int, db: Session):
+    contact = db.query(Contact).filter(Contact.id == contact_id).first()
+    if contact:
+        db.delete(contact)
+        db.commit()
+    return contact

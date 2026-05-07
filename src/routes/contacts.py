@@ -33,3 +33,17 @@ async def update_contact(contact_id: int, body: ContactUpdate, db: Session = Dep
 @router.get("/birthdays", response_model=List[ContactResponse])
 async def get_birthdays(db: Session = Depends(get_db)):
     return await repository_contacts.get_upcoming_birthdays(db)
+
+@router.get("/{contact_id}", response_model=ContactResponse)
+async def read_contact(contact_id: int, db: Session = Depends(get_db)):
+    contact = await repository_contacts.get_contact(contact_id, db)
+    if contact is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+    return contact
+
+@router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_contact(contact_id: int, db: Session = Depends(get_db)):
+    contact = await repository_contacts.remove_contact(contact_id, db)
+    if contact is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+    return None
